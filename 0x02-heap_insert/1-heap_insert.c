@@ -12,7 +12,6 @@ heap_t *heap_insert(heap_t **root, int value)
 {
 	heap_t *node, *parent;
 
-	/* For an empty tree, create nodes and return tree pointer to tree */
 	if (*root == NULL)
 	{
 		node = binary_tree_node(*root, value);
@@ -21,22 +20,18 @@ heap_t *heap_insert(heap_t **root, int value)
 	}
 	node = *root;
 
-	/* Traverse tree */
 	while (node != NULL)
 	{
 		parent = node;
-		/* Ignore duplicates */
 		if (node->n == value)
 			return (node_swap(node));
 
-		/* Sort tree into BST formation */
 		if (value > node->n)
 			node = parent->left;
 		else
 			node = node->right;
 	}
 
-	/* Sort parent nodes */
 	if (value > parent->n)
 	{
 		parent->left = binary_tree_node(parent, value);
