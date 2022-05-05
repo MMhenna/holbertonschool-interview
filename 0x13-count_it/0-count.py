@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-0x13. Count it! - Write a recursive function that queries the Reddit API.
+0x13. Count it!
 
 """
 
