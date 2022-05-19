@@ -1,92 +1,103 @@
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <ctype.h>
-/**
- * _isnumber - checks if string is number
- *
- * @s: string
- *
- * Return: 1 if number, 0 if not
- */
-int _isnumber(char *s)
-{
-	int i, check, d;
+#include "holberton.h"
 
-	d = 0, check = 1;
-	for (i = 0; *(s + i) != 0; i++)
+/**
+ * _puts - print each string number
+ * @s: string. number
+ * Return: void
+ */
+void _puts(char *s)
+{
+	if (*s != '\0')
 	{
-		d = isdigit(*(s + i));
-		if (d == 0)
-		{
-			check = 0;
-			break;
-		}
+		_putchar(*s);
+		puts(s + 1);
 	}
-	return (check);
 }
-
 /**
- * _callocX - reserves memory initialized to 0
- *
- * @nmemb: # of bytes
- *
- * Return: pointer
+ * _isdigit - check if s is a number or not.
+ * @s: string to check.
+ * Return: 0 if s is a number otherwise 1.
  */
-char *_callocX(unsigned int nmemb)
+int _isdigit(char *s)
 {
-	unsigned int i;
-	char *p;
+	int i, digit = 0;
 
-	p = malloc(nmemb + 1);
-	if (p == 0)
-		return (0);
-	for (i = 0; i < nmemb; i++)
-		p[i] = '0';
-	p[i] = '\0';
-	return (p);
-}
-
-/**
- * main - multiplies inf numbers
- *
- * @argc: # of cmd line args
- * @argv: cmd line args
- * Return: No return
- */
-int main(int argc, char **argv)
-{
-	int i, j, l1, l2, lful, mul, add, ten, ten2, tl, zer = 0;
-	char *res;
-
-	if (argc != 3 || _isnumber(argv[1]) == 0 || _isnumber(argv[2]) == 0)
-		printf("Error\n"), exit(98);
-	if (atoi(argv[1]) == 0 || atoi(argv[2]) == 0)
-		printf("0\n"), exit(0);
-	l1 = strlen(argv[1]), l2 = strlen(argv[2]);
-	lful = l1 + l2;
-	res = _callocX(lful);
-	if (res == 0)
-		printf("Error\n"), exit(98);
-	for (i = l2 - 1; i >= 0; i--)
+	for (i = 0; s[i] && !digit; i++)
 	{
-		ten = 0, ten2 = 0;
-		for (j = l1 - 1; j >= 0; j--)
-		{
-			tl = i + j + 1;
-			mul = (argv[1][j] - '0') * (argv[2][i] - '0') + ten;
-			ten = mul / 10;
-			add = (res[tl] - '0') + (mul % 10) + ten2;
-			ten2 = add / 10;
-			res[tl] = (add % 10) + '0';
-		}
-		res[tl - 1] = (ten + ten2) + '0';
+		if (s[i] < '0' || s[i] > '9')
+			digit++;
 	}
-	if (res[0] == '0')
-		zer = 1;
-	for (; zer < lful; zer++)
-		printf("%c", res[zer]);
-	printf("\n");
-	free(res);
+	return (digit);
+}
+/**
+ * operations - multiplies, adds and stores the result in a string.
+ * @num1: first number.
+ * @num2: second number.
+ * @len1: length of num1.
+ * @len2: length of num2.
+ * Return: result of multiplies.
+ */
+char *operations(char *num1, char *num2, int len1, int len2)
+{
+	char *result = NULL;
+	int i, j, carry, len_total = (len1 + len2);
+
+	result = malloc(sizeof(char) * len_total);
+	if (!result)
+	{
+		_puts("Error");
+		exit(98);
+	}
+	for (i = 0; i < len_total; i++)
+		result[i] = '0';
+	for (i = len1 - 1; i >= 0; i--)
+	{
+		carry = 0;
+		for (j = len2 - 1; j >= 0; j--)
+		{
+			carry += (num1[i] - '0') * (num2[j] - '0');
+			carry += result[i + j + 1] - '0';
+			result[i + j + 1] = (carry % 10) + '0';
+			carry /= 10;
+		}
+		if (carry)
+			result[i + j + 1] = (carry % 10) + '0';
+	}
+	return (result);
+}
+/**
+ * main - multiplies two positive numbers.
+ * description: Usage: mul num1 num2
+ * Print the result, followed by a new line.
+ * @av: arguments value (num1, num2)
+ * @ac: arguments count
+ * Return: 0 if success otherwise 98 and print Error.
+ */
+int main(int ac, char **av)
+{
+	int len1 = 0, len2 = 0;
+	char *num1 = av[1], *num2 = av[2], *result = NULL;
+
+	if (ac != 3 || _isdigit(num1) || _isdigit(num2))
+	{
+		_puts("Error");
+		exit(98);
+	}
+	if (av[1][0] == 48 || av[2][0] == 48)
+	{
+		_puts("0");
+		exit(0);
+	}
+	while (num1[len1])
+		len1++;
+	while (num2[len2])
+		len2++;
+
+	result = operations(num1, num2, len1, len2);
+	if (result[0] == '0')
+		_puts(result + 1);
+	else
+		_puts(result);
+	free(result);
 	return (0);
 }
